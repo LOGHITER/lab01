@@ -3,6 +3,7 @@
 #include <ctime>
 #include <random>
 #include <time.h>
+#include <fstream>
 
 double avg(int N, long long int (&arr)[]) {
     double sum = 0;
@@ -27,7 +28,7 @@ void make_sort(int* ptr, long long int N) {
     }
 }
 
-int search(long long int N, int* ptr, int f) {
+int search(int* ptr, long long int N, int f) {
     for(long long int i = 0; i < N; ++i) {
         if(ptr[i] == f) {
             return i;
@@ -36,37 +37,56 @@ int search(long long int N, int* ptr, int f) {
     return 0;
 }
 
-int binsearch(long long int N, int* ptr, int f, int l, int r) {
-    if(ptr[(l+r)/2] == f) {
-        return (l+r)/2;
-    }
-    else if(ptr[(l+r)/2] > f){
-        l = (l+r)/2 - 1 ;
-        binsearch(N, ptr, f, l, r);
-    }
-    else if(ptr[(l+r)/2] < f) {
-        r = (l+r)/2 - 1;
-        binsearch(N, ptr, f, l, r);
-    }
-    else if(l == r) {
-        return(l);
-    }
+bool binar_search(int* input_array, unsigned long long size, long long int needed) {
+	unsigned long long int l = 0;
+	unsigned long long int r = size - 1;
+	unsigned long long int mid;
+
+	while (r - l > 1) {
+		mid = (l + r) / 2;
+
+		if (input_array[mid] > needed) {
+			r = mid;
+		}
+		else {
+			l = mid;
+		}
+	}
+	if (input_array[l] == needed) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 int main() {
-    double time = 0;
+    std::ofstream fout; 
+    fout.open(("data_binar_search_rand.csv"));
+    fout.clear();
+    fout << 'N' << ',' << 'T' << std::endl;
+    long long int time = 0;
+
     for(long long int i = 1; i <= 1000; i++ ) {
         int* ptr = new int[i*1000];
-        auto start = clock();
+        //auto start = clock();
         for(int j = 0; j<10; j++) {
             make_sort(ptr, i*1000);
-            binsearch(1000*i, ptr, rand(), 0, i*1000-1);
+            long long int r = rand() % i*1000;
+            auto start = std::chrono::high_resolution_clock::now();
+            binar_search(ptr ,i*1000 , rand());
+            auto end = std::chrono::high_resolution_clock::now();
+            long long int d = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count(); 
+            time += d;
+
         }
-        auto end = clock();
-        time = end - start;
-        std::cout << i << ',' << time/10 << std::endl;
+        //auto end = clock();
+        //time = end - start;
+        fout << i << ',' << time/10 << std::endl;
         delete ptr;
         ptr = nullptr;
     }
+
+    fout.close();
 
 }
