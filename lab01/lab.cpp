@@ -60,29 +60,46 @@ bool binar_search(int* input_array, unsigned long long size, long long int neede
 	}
 }
 
+bool SumSearch(int* InputArray, long long int size, long long int sum) {
+    for(long long int i = 0; i < size; ++i) {
+        for(long long int j = 0; j < size; ++j) {
+            if(InputArray[i]+InputArray[j] == sum) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool QSumSearch(int* inputArray, long long int size, long long int sum) {
+    for(int i = 0; i < size; ++i ) {
+        if(binar_search(inputArray, size, sum - inputArray[i]) == true) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int main() {
     std::ofstream fout; 
-    fout.open(("data_binar_search_rand.csv"));
+    fout.open(("data_binar_search_from_array.csv"));
     fout.clear();
     fout << 'N' << ',' << 'T' << std::endl;
     long long int time = 0;
 
     for(long long int i = 1; i <= 1000; i++ ) {
         int* ptr = new int[i*1000];
-        //auto start = clock();
-        for(int j = 0; j<10; j++) {
+        for(int j = 0; j<100; j++) {
             make_sort(ptr, i*1000);
             long long int r = rand() % i*1000;
             auto start = std::chrono::high_resolution_clock::now();
-            binar_search(ptr ,i*1000 , rand());
+            binar_search(ptr ,i*1000 , ptr[rand()%(i*1000)]);
             auto end = std::chrono::high_resolution_clock::now();
             long long int d = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count(); 
             time += d;
-
         }
-        //auto end = clock();
-        //time = end - start;
-        fout << i << ',' << time/10 << std::endl;
+        fout << i << ',' << time/100 << std::endl;
+        time = 0;
         delete ptr;
         ptr = nullptr;
     }
