@@ -82,25 +82,32 @@ bool QSumSearch(int* inputArray, long long int size, long long int sum) {
 
 int main() {
     std::ofstream fout; 
-    fout.open(("data_binar_search_from_array.csv"));
+    fout.open(("data_sum_rand.csv"));
     fout.clear();
-    fout << 'N' << ',' << 'T' << std::endl;
-    long long int time = 0;
+    fout << 'N' << ',' << 'T' << '1' << ',' << 'T' << '2' << std::endl;
+    long long int time1, time2 = 0;
 
     for(long long int i = 1; i <= 1000; i++ ) {
         int* ptr = new int[i*1000];
-        for(int j = 0; j<100; j++) {
-            make_sort(ptr, i*1000);
-            long long int r = rand() % i*1000;
-            auto start = std::chrono::high_resolution_clock::now();
-            binar_search(ptr ,i*1000 , ptr[rand()%(i*1000)]);
-            auto end = std::chrono::high_resolution_clock::now();
-            long long int d = std::chrono::duration_cast<std::chrono::nanoseconds>(end-start).count(); 
-            time += d;
+        for(int j = 0; j<10; j++) {
+            make(ptr, i*1000);
+            long long int r1 = rand() % i*1000;
+            long long int r2 = rand() % i*1000;
+            auto start1 = std::chrono::high_resolution_clock::now();
+            SumSearch(ptr ,i*1000 , rand());
+            auto end1 = std::chrono::high_resolution_clock::now();
+            long long int d1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1-start1).count(); 
+            time1 += d1;
+            //auto start2 = std::chrono::high_resolution_clock::now();
+            //binar_search(ptr ,i*1000 , ptr[r]);
+            //auto end2 = std::chrono::high_resolution_clock::now();
+            //long long int d2 = std::chrono::duration_cast<std::chrono::nanoseconds>(end2-start2).count(); 
+            //time2 += d2;
         }
-        fout << i << ',' << time/100 << std::endl;
-        time = 0;
-        delete ptr;
+        fout << i << ',' << time1/10 << ',' << time2/10 << std::endl;
+        time1 = 0;
+        time2 = 0;
+        delete[] ptr;
         ptr = nullptr;
     }
 
